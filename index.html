@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
+  <title>Задание: Угадай жанр</title>
+  <style>
+    :root {
+      --reb-pink: #ED3269;
+      --reb-pink-light: #FAD1DE;
+      --reb-dark: #1E1E1E;
+      --reb-bg: #F5F7FA;
+      --card-bg: #FFFFFF;
+      --border-color: #E2E8F0;
+      --success-color: #22C55E;
+      --error-color: #EF4444;
+      --card-blue: #5A67D8;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background-color: var(--reb-bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 30px 20px;
+      color: var(--reb-dark);
+    }
+
+    .logo {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      height: 25px;
+      z-index: 10;
+    }
+
+    .main-container {
+      max-width: 1200px;
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: 30px;
+      padding: 40px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+      position: relative;
+      border: 1px solid var(--border-color);
+    }
+
+    .header-text {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--reb-dark);
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #64748B;
+      background: #F1F5F9;
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .instruction {
+      font-size: 0.95rem;
+      color: var(--reb-pink);
+      font-weight: 600;
+    }
+
+    /* Игровая зона */
+    .game-area {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* Банки элементов */
+    .banks-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr 2fr;
+      gap: 20px;
+      background: #F8FAFC;
+      padding: 25px;
+      border-radius: 20px;
+      border: 2px dashed #CBD5E1;
+    }
+
+    .bank-col {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .bank-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #475569;
+      text-align: center;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .bank-items {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      min-height: 80px;
+    }
+
+    /* Интерактивные элементы (Draggables) */
+    .draggable {
+      background: white;
+      border: 2px solid #CBD5E1;
+      border-radius: 12px;
+      cursor: grab;
+      user-select: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .draggable:active {
+      cursor: grabbing;
+      transform: scale(0.98);
+    }
+
+    .draggable:hover {
+      border-color: var(--card-blue);
+      box-shadow: 0 6px 12px rgba(90, 103, 216, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .draggable.selected {
+      border-color: var(--reb-pink);
+      background: var(--reb-pink-light);
+      box-shadow: 0 0 0 3px rgba(237, 50, 105, 0.2);
+    }
+
+    /* Специфичные стили для разных типов */
+    .item-audio {
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      color: var(--reb-dark);
+      border-radius: 30px;
+    }
+
+    .play-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--reb-pink);
+      color: white;
+      border: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s;
+      flex-shrink: 0;
+    }
+
+    .play-btn:hover {
+      background: var(--reb-pink-hover);
+      transform: scale(1.1);
+    }
+
+    .item-name {
+      padding: 12px 20px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-align: center;
+      color: var(--card-blue);
+      border-radius: 30px;
+    }
+
+    .item-desc {
+      padding: 15px;
+      font-size: 0.95rem;
+      color: #334155;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    /* Зона сборок (Workspace) */
+    .workspace {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .assembly-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 2fr;
+      gap: 20px;
+      background: white;
+      border: 1px solid #E2E8F0;
+      padding: 15px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+      align-items: stretch;
+    }
+
+    /* Слоты */
+    .slot {
+      background: #F1F5F9;
+      border: 2px dashed #CBD5E1;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.3s;
+      position: relative;
+      min-height: 70px;
+    }
+
+    .slot::after {
+      color: #94A3B8;
+      font-size: 0.95rem;
+      font-weight: 600;
+      position: absolute;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .slot[data-type="audio"]::after { content: '🎵 Сюда аудио'; }
+    .slot[data-type="name"]::after { content: '🏷️ Сюда название'; }
+    .slot[data-type="desc"]::after { content: '📝 Сюда описание'; }
+
+    .slot.drag-over {
+      background: #FEF2F2;
+      border-color: var(--reb-pink);
+    }
+
+    .slot.highlight {
+      background: #FEF2F2;
+      border-color: var(--reb-pink);
+      cursor: pointer;
+    }
+
+    .slot.has-item::after {
+      opacity: 0;
+    }
+
+    .slot.has-item {
+      border: 2px solid transparent;
+      background: transparent;
+    }
+
+    .slot .draggable {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Кнопка проверки */
+    .check-btn-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .check-btn {
+      background: var(--success-color);
+      color: white;
+      border: none;
+      padding: 16px 50px;
+      font-size: 1.2rem;
+      font-weight: 800;
+      border-radius: 40px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #16A34A;
+      transition: all 0.1s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .check-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 0 0 #16A34A;
+    }
+
+    .check-btn:hover {
+      background: #4ADE80;
+    }
+
+    /* Анимации */
+    .shake {
+      animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    
+    .shake .draggable {
+      background: #FEF2F2 !important;
+      border-color: var(--error-color) !important;
+      color: var(--error-color) !important;
+    }
+
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-2px, 0, 0); }
+      20%, 80% { transform: translate3d(4px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+      40%, 60% { transform: translate3d(6px, 0, 0); }
+    }
+
+    .success-row {
+      border-color: var(--success-color);
+      background: #F0FDF4;
+      box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
+    }
+    
+    .success-row .draggable {
+      border-color: var(--success-color);
+      pointer-events: none;
+    }
+
+    .pop {
+      animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Модальное окно */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(30, 30, 30, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-card {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      text-align: center;
+      max-width: 450px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+      transform: scale(0.8);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .character-modal-img {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+      margin-bottom: 20px;
+    }
+
+    .modal-card h2 {
+      font-size: 1.8rem;
+      color: var(--reb-dark);
+      margin-bottom: 15px;
+    }
+    
+    .modal-card p {
+      font-size: 1.1rem;
+      color: #475569;
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    .modal-btn {
+      background: var(--reb-pink);
+      color: white;
+      border: none;
+      padding: 14px 35px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #D12558;
+      transition: all 0.1s;
+    }
+
+    @media (max-width: 900px) {
+      .banks-container { grid-template-columns: 1fr; }
+      .assembly-row { grid-template-columns: 1fr; }
+      .slot { min-height: 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <img src="logo.png" alt="Rebotica" class="logo">
+
+  <div class="main-container">
+    <div class="header-text">
+      <h1 class="title">Сборка жанров</h1>
+      <div class="subtitle">Послушай аудио и собери полную комбинацию!</div>
+      <div class="instruction">💡 Перетаскивай карточки в пустые слоты (или просто кликай по ним).</div>
+    </div>
+
+    <div class="game-area">
+      
+      <!-- Банки элементов -->
+      <div class="banks-container">
+        <div class="bank-col">
+          <div class="bank-title">🎵 Аудио</div>
+          <div class="bank-items" id="bankAudio"></div>
+        </div>
+        <div class="bank-col">
+          <div class="bank-title">🏷️ Названия</div>
+          <div class="bank-items" id="bankNames"></div>
+        </div>
+        <div class="bank-col">
+          <div class="bank-title">📝 Описания</div>
+          <div class="bank-items" id="bankDescs"></div>
+        </div>
+      </div>
+
+      <!-- Зона сборок -->
+      <div class="workspace" id="workspace">
+        <!-- Ряды генерируются через JS -->
+      </div>
+      
+      <div class="check-btn-container">
+        <button class="check-btn" onclick="checkAnswers()">Проверить всё</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Модальное окно победы -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-card">
+      <img src="neiro.png" alt="Нейро" class="character-modal-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'150\'><rect width=\'150\' height=\'150\' fill=\'%231E1E1E\' rx=\'20\'/><text x=\'50%\' y=\'50%\' fill=\'white\' font-size=\'20\' text-anchor=\'middle\' dy=\'.3em\'>Нейро</text></svg>'">
+      <h2>Отличный слух!</h2>
+      <p>Ты великолепно сопоставил все жанры, музыку и их описания. Нейро гордится тобой!</p>
+      <button class="modal-btn" onclick="closeModal()">Ура!</button>
+    </div>
+  </div>
+
+  <!-- Модальное окно ошибки -->
+  <div class="modal-overlay" id="failModal">
+    <div class="modal-card">
+      <img src="reb.png" alt="Реб" class="character-modal-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'150\'><circle cx=\'75\' cy=\'75\' r=\'70\' fill=\'%23ED3269\'/><text x=\'50%\' y=\'50%\' fill=\'white\' font-size=\'20\' text-anchor=\'middle\' dy=\'.3em\'>Реб</text></svg>'">
+      <h2>Есть ошибки...</h2>
+      <p id="failMessage">Некоторые карточки стоят не на своих местах (они подсвечены красным). Попробуй поменять их местами!</p>
+      <button class="modal-btn" onclick="closeFailModal()">Исправить</button>
+    </div>
+  </div>
+
+  <script>
+    // Данные для игры
+    const gameData = [
+      { 
+        id: 'classic', 
+        name: 'Классика', 
+        desc: 'Музыка, которую играют оркестры (скрипки, пианино). Звучит как в кино про королей, балетах или старинных сказках.', 
+        audio: 'класика.mp3' // Сохранил орфографию из скриншота файлов
+      },
+      { 
+        id: 'rock', 
+        name: 'Рок', 
+        desc: 'Драйв, электрогитары и громкие барабаны. Очень энергичная и мощная музыка!', 
+        audio: 'рок.mp3' 
+      },
+      { 
+        id: 'pop', 
+        name: 'Поп-музыка', 
+        desc: 'То, что чаще всего играет по радио. Веселая, ритмичная, с запоминающимся мотивом, под который хочется петь.', 
+        audio: 'поп_музыка.mp3' 
+      },
+      { 
+        id: 'rap', 
+        name: 'Рэп / Хип-хоп', 
+        desc: 'Ритмичный бит, где исполнитель не поет, а быстро и круто читает стихи под музыку.', 
+        audio: 'рэп.mp3' 
+      },
+      { 
+        id: 'electro', 
+        name: 'Электронная музыка', 
+        desc: 'Музыка, которую создают не на живых инструментах, а на компьютере и синтезаторах. Часто звучит на танцполах или в космосе!', 
+        audio: 'электро.mp3' 
+      }
+    ];
+
+    // Аудио плеер
+    let currentAudio = new Audio();
+    let currentPlayingBtn = null;
+
+    // Глобальные переменные для перетаскивания и кликов
+    let draggedItem = null;
+    let selectedItemForClick = null;
+
+    // DOM Элементы
+    const bankAudio = document.getElementById('bankAudio');
+    const bankNames = document.getElementById('bankNames');
+    const bankDescs = document.getElementById('bankDescs');
+    const workspace = document.getElementById('workspace');
+
+    // Перемешивание массива
+    function shuffle(array) {
+      let currentIndex = array.length, randomIndex;
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+      }
+      return array;
+    }
+
+    // Инициализация
+    function initGame() {
+      // Подготавливаем перемешанные массивы
+      const audioArr = shuffle([...gameData]);
+      const namesArr = shuffle([...gameData]);
+      const descsArr = shuffle([...gameData]);
+
+      // Создаем элементы в банке
+      audioArr.forEach((item, index) => {
+        const el = createDraggable(item.id, 'audio', `
+          <button class="play-btn" onclick="togglePlay(this, '${item.audio}'); event.stopPropagation();">▶</button>
+          <span>Трек ${index + 1}</span>
+        `, 'item-audio pop');
+        el.style.animationDelay = `${index * 0.1}s`;
+        bankAudio.appendChild(el);
+      });
+
+      namesArr.forEach((item, index) => {
+        const el = createDraggable(item.id, 'name', item.name, 'item-name pop');
+        el.style.animationDelay = `${index * 0.1}s`;
+        bankNames.appendChild(el);
+      });
+
+      descsArr.forEach((item, index) => {
+        const el = createDraggable(item.id, 'desc', item.desc, 'item-desc pop');
+        el.style.animationDelay = `${index * 0.1}s`;
+        bankDescs.appendChild(el);
+      });
+
+      // Создаем 5 рядов сборки
+      for (let i = 0; i < 5; i++) {
+        const row = document.createElement('div');
+        row.className = 'assembly-row pop';
+        row.style.animationDelay = `${i * 0.1}s`;
+        
+        row.appendChild(createSlot('audio'));
+        row.appendChild(createSlot('name'));
+        row.appendChild(createSlot('desc'));
+        
+        workspace.appendChild(row);
+      }
+    }
+
+    // Создание перетаскиваемого элемента
+    function createDraggable(id, type, innerHTML, extraClass) {
+      const el = document.createElement('div');
+      el.className = `draggable ${extraClass}`;
+      el.draggable = true;
+      el.dataset.id = id;
+      el.dataset.type = type;
+      el.id = `drag-${type}-${id}`; // Уникальный ID
+      el.innerHTML = innerHTML;
+
+      // HTML5 Drag Events
+      el.addEventListener('dragstart', (e) => {
+        draggedItem = el;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', el.id);
+        setTimeout(() => el.style.opacity = '0.5', 0);
+        
+        // Сброс клик-выделения, если начали тащить
+        if(selectedItemForClick) selectedItemForClick.classList.remove('selected');
+        selectedItemForClick = null;
+        clearHighlights();
+      });
+
+      el.addEventListener('dragend', () => {
+        draggedItem = null;
+        el.style.opacity = '1';
+      });
+
+      // Click-to-move (Альтернатива для планшетов)
+      el.addEventListener('click', (e) => {
+        if (selectedItemForClick === el) {
+          // Отмена выделения
+          el.classList.remove('selected');
+          selectedItemForClick = null;
+          clearHighlights();
+        } else {
+          // Выделение нового
+          if(selectedItemForClick) selectedItemForClick.classList.remove('selected');
+          el.classList.add('selected');
+          selectedItemForClick = el;
+          highlightSlots(type);
+        }
+      });
+
+      return el;
+    }
+
+    // Создание слота (приемника)
+    function createSlot(type) {
+      const slot = document.createElement('div');
+      slot.className = 'slot';
+      slot.dataset.type = type;
+
+      // HTML5 Drop Events
+      slot.addEventListener('dragover', (e) => {
+        if (draggedItem && draggedItem.dataset.type === type) {
+          e.preventDefault();
+          slot.classList.add('drag-over');
+        }
+      });
+
+      slot.addEventListener('dragleave', () => {
+        slot.classList.remove('drag-over');
+      });
+
+      slot.addEventListener('drop', (e) => {
+        e.preventDefault();
+        slot.classList.remove('drag-over');
+        const id = e.dataTransfer.getData('text/plain');
+        const el = document.getElementById(id);
+        if (el && el.dataset.type === type) {
+          placeItemInSlot(el, slot);
+        }
+      });
+
+      // Click-to-drop Event
+      slot.addEventListener('click', () => {
+        if (selectedItemForClick && selectedItemForClick.dataset.type === type) {
+          placeItemInSlot(selectedItemForClick, slot);
+          selectedItemForClick.classList.remove('selected');
+          selectedItemForClick = null;
+          clearHighlights();
+        } else if (slot.children.length > 0) {
+          // Если кликнули на заполненный слот (без выбранного элемента), выкидываем элемент обратно в банк
+          const item = slot.children[0];
+          returnItemToBank(item);
+        }
+      });
+
+      return slot;
+    }
+
+    // Логика перемещения элемента в слот
+    function placeItemInSlot(item, slot) {
+      // Если в слоте уже что-то есть, возвращаем старое в банк
+      if (slot.children.length > 0) {
+        returnItemToBank(slot.children[0]);
+      }
+      
+      slot.appendChild(item);
+      slot.classList.add('has-item');
+    }
+
+    // Возврат элемента в родной банк
+    function returnItemToBank(item) {
+      item.parentElement.classList.remove('has-item');
+      
+      if (item.dataset.type === 'audio') bankAudio.appendChild(item);
+      else if (item.dataset.type === 'name') bankNames.appendChild(item);
+      else if (item.dataset.type === 'desc') bankDescs.appendChild(item);
+    }
+
+    // Подсветка слотов для Click-to-move
+    function highlightSlots(type) {
+      clearHighlights();
+      document.querySelectorAll(`.slot[data-type="${type}"]`).forEach(slot => {
+        slot.classList.add('highlight');
+      });
+    }
+
+    function clearHighlights() {
+      document.querySelectorAll('.slot').forEach(slot => slot.classList.remove('highlight'));
+    }
+
+    // Управление Аудио
+    function togglePlay(btn, src) {
+      if (currentAudio.src.endsWith(src) && !currentAudio.paused) {
+         currentAudio.pause();
+         btn.innerHTML = '▶';
+         return;
+      }
+      if (currentPlayingBtn) currentPlayingBtn.innerHTML = '▶';
+      
+      currentAudio.src = src;
+      currentAudio.play().catch(e => {
+        console.log("Audio play failed. Note: files need to be in the same folder.", e);
+        alert("Звуковой файл " + src + " не найден в папке.");
+      });
+      btn.innerHTML = '⏸';
+      currentPlayingBtn = btn;
+    }
+
+    currentAudio.onended = () => { 
+      if(currentPlayingBtn) currentPlayingBtn.innerHTML = '▶'; 
+    }
+
+    // Проверка результатов
+    function checkAnswers() {
+      const rows = document.querySelectorAll('.assembly-row');
+      let isAllCorrect = true;
+      let emptySlots = 0;
+
+      rows.forEach(row => {
+        const slots = row.querySelectorAll('.slot');
+        let rowFilled = true;
+        let rowGenre = null;
+        let rowCorrect = true;
+
+        slots.forEach(slot => {
+          if (slot.children.length === 0) {
+            rowFilled = false;
+            emptySlots++;
+          } else {
+            const itemGenre = slot.children[0].dataset.id;
+            if (!rowGenre) rowGenre = itemGenre;
+            else if (rowGenre !== itemGenre) rowCorrect = false;
+          }
+        });
+
+        // Сбрасываем стили
+        row.classList.remove('success-row', 'shake');
+
+        if (rowFilled) {
+          if (rowCorrect) {
+            row.classList.add('success-row');
+          } else {
+            row.classList.add('shake');
+            isAllCorrect = false;
+          }
+        } else {
+          isAllCorrect = false;
+        }
+      });
+
+      if (emptySlots > 0) {
+        document.getElementById('failMessage').textContent = `Некоторые слоты пустые! Собери все жанры полностью.`;
+        document.getElementById('failModal').classList.add('active');
+      } else if (isAllCorrect) {
+        // Останавливаем музыку при победе
+        currentAudio.pause();
+        if(currentPlayingBtn) currentPlayingBtn.innerHTML = '▶';
+        document.getElementById('successModal').classList.add('active');
+      } else {
+        document.getElementById('failMessage').textContent = `Некоторые карточки не подходят друг другу (ряды подсвечены красным). Послушай внимательно и попробуй поменять их местами!`;
+        document.getElementById('failModal').classList.add('active');
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('successModal').classList.remove('active');
+    }
+
+    function closeFailModal() {
+      document.getElementById('failModal').classList.remove('active');
+      // Снимаем тряску после закрытия окна
+      document.querySelectorAll('.shake').forEach(el => el.classList.remove('shake'));
+    }
+
+    // Запуск игры
+    initGame();
+  </script>
+</body>
+</html>
