@@ -38,7 +38,7 @@
       position: absolute;
       top: 30px;
       right: 30px;
-      height: 25px;
+      height: 40px;
       z-index: 10;
     }
 
@@ -89,72 +89,41 @@
       gap: 30px;
     }
 
-    /* Банки элементов */
-    .banks-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr 2fr;
-      gap: 20px;
-      background: #F8FAFC;
-      padding: 25px;
-      border-radius: 20px;
-      border: 2px dashed #CBD5E1;
-    }
-
-    .bank-col {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .bank-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #475569;
-      text-align: center;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .bank-items {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    /* Выпадающие списки */
+    .custom-select {
       width: 100%;
-      min-height: 80px;
-    }
-
-    /* Интерактивные элементы (Draggables) */
-    .draggable {
-      background: white;
-      border: 2px solid #CBD5E1;
-      border-radius: 12px;
-      cursor: grab;
-      user-select: none;
+      padding: 15px 40px 15px 15px;
+      border-radius: 15px;
+      border: 2px solid var(--border-color);
+      font-size: 1rem;
+      color: var(--reb-dark);
+      background-color: #F8FAFC;
+      cursor: pointer;
+      outline: none;
       transition: all 0.2s;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      position: relative;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364748B%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px top 50%;
+      background-size: 12px auto;
     }
 
-    .draggable:active {
-      cursor: grabbing;
-      transform: scale(0.98);
-    }
-
-    .draggable:hover {
+    .custom-select:hover {
       border-color: var(--card-blue);
-      box-shadow: 0 6px 12px rgba(90, 103, 216, 0.15);
-      transform: translateY(-2px);
     }
 
-    .draggable.selected {
+    .custom-select:focus {
       border-color: var(--reb-pink);
-      background: var(--reb-pink-light);
-      box-shadow: 0 0 0 3px rgba(237, 50, 105, 0.2);
+      box-shadow: 0 0 0 3px var(--reb-pink-light);
     }
 
-    /* Специфичные стили для разных типов */
+    .error-select {
+      border-color: var(--error-color) !important;
+      background-color: #FEF2F2 !important;
+      color: var(--error-color);
+    }
+
+    /* Аудио плеер */
     .item-audio {
       padding: 10px 15px;
       display: flex;
@@ -163,11 +132,12 @@
       font-weight: 700;
       color: var(--reb-dark);
       border-radius: 30px;
+      background: #F1F5F9;
     }
 
     .play-btn {
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       background: var(--reb-pink);
       color: white;
@@ -176,31 +146,15 @@
       justify-content: center;
       align-items: center;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 16px;
       transition: 0.2s;
       flex-shrink: 0;
+      box-shadow: 0 4px 6px rgba(237, 50, 105, 0.3);
     }
 
     .play-btn:hover {
       background: var(--reb-pink-hover);
       transform: scale(1.1);
-    }
-
-    .item-name {
-      padding: 12px 20px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      text-align: center;
-      color: var(--card-blue);
-      border-radius: 30px;
-    }
-
-    .item-desc {
-      padding: 15px;
-      font-size: 0.95rem;
-      color: #334155;
-      line-height: 1.4;
-      font-weight: 500;
     }
 
     /* Зона сборок (Workspace) */
@@ -212,68 +166,15 @@
 
     .assembly-row {
       display: grid;
-      grid-template-columns: 1fr 1fr 2fr;
+      grid-template-columns: 1fr 1.5fr 2.5fr;
       gap: 20px;
       background: white;
       border: 1px solid #E2E8F0;
-      padding: 15px;
+      padding: 20px;
       border-radius: 20px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-      align-items: stretch;
-    }
-
-    /* Слоты */
-    .slot {
-      background: #F1F5F9;
-      border: 2px dashed #CBD5E1;
-      border-radius: 12px;
-      display: flex;
-      justify-content: center;
       align-items: center;
       transition: all 0.3s;
-      position: relative;
-      min-height: 70px;
-    }
-
-    .slot::after {
-      color: #94A3B8;
-      font-size: 0.95rem;
-      font-weight: 600;
-      position: absolute;
-      pointer-events: none;
-      transition: opacity 0.2s;
-    }
-
-    .slot[data-type="audio"]::after { content: '🎵 Сюда аудио'; }
-    .slot[data-type="name"]::after { content: '🏷️ Сюда название'; }
-    .slot[data-type="desc"]::after { content: '📝 Сюда описание'; }
-
-    .slot.drag-over {
-      background: #FEF2F2;
-      border-color: var(--reb-pink);
-    }
-
-    .slot.highlight {
-      background: #FEF2F2;
-      border-color: var(--reb-pink);
-      cursor: pointer;
-    }
-
-    .slot.has-item::after {
-      opacity: 0;
-    }
-
-    .slot.has-item {
-      border: 2px solid transparent;
-      background: transparent;
-    }
-
-    .slot .draggable {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      display: flex;
-      align-items: center;
     }
 
     /* Кнопка проверки */
@@ -416,42 +317,24 @@
     }
 
     @media (max-width: 900px) {
-      .banks-container { grid-template-columns: 1fr; }
       .assembly-row { grid-template-columns: 1fr; }
-      .slot { min-height: 60px; }
     }
   </style>
 </head>
 <body>
 
-  <img src="logo.png" alt="Rebotica" class="logo">
+  <img src="logo.svg" alt="Rebotica" class="logo">
 
   <div class="main-container">
     <div class="header-text">
       <h1 class="title">Сборка жанров</h1>
       <div class="subtitle">Послушай аудио и собери полную комбинацию!</div>
-      <div class="instruction">💡 Перетаскивай карточки в пустые слоты (или просто кликай по ним).</div>
+      <div class="instruction">💡 Послушай аудио и выбери подходящее название жанра и его описание из выпадающих списков.</div>
     </div>
 
     <div class="game-area">
       
-      <!-- Банки элементов -->
-      <div class="banks-container">
-        <div class="bank-col">
-          <div class="bank-title">🎵 Аудио</div>
-          <div class="bank-items" id="bankAudio"></div>
-        </div>
-        <div class="bank-col">
-          <div class="bank-title">🏷️ Названия</div>
-          <div class="bank-items" id="bankNames"></div>
-        </div>
-        <div class="bank-col">
-          <div class="bank-title">📝 Описания</div>
-          <div class="bank-items" id="bankDescs"></div>
-        </div>
-      </div>
-
-      <!-- Зона сборок -->
+      <!-- Зона сборок (Список треков) -->
       <div class="workspace" id="workspace">
         <!-- Ряды генерируются через JS -->
       </div>
@@ -522,14 +405,7 @@
     let currentAudio = new Audio();
     let currentPlayingBtn = null;
 
-    // Глобальные переменные для перетаскивания и кликов
-    let draggedItem = null;
-    let selectedItemForClick = null;
-
     // DOM Элементы
-    const bankAudio = document.getElementById('bankAudio');
-    const bankNames = document.getElementById('bankNames');
-    const bankDescs = document.getElementById('bankDescs');
     const workspace = document.getElementById('workspace');
 
     // Перемешивание массива
@@ -545,183 +421,81 @@
 
     // Инициализация
     function initGame() {
-      // Подготавливаем перемешанные массивы
-      const audioArr = shuffle([...gameData]);
+      workspace.innerHTML = '';
+      
+      // Подготавливаем перемешанные массивы для списков
       const namesArr = shuffle([...gameData]);
       const descsArr = shuffle([...gameData]);
+      const audioArr = shuffle([...gameData]); // Треки тоже перемешаем
 
-      // Создаем элементы в банке
-      audioArr.forEach((item, index) => {
-        const el = createDraggable(item.id, 'audio', `
-          <button class="play-btn" onclick="togglePlay(this, '${item.audio}'); event.stopPropagation();">▶</button>
-          <span>Трек ${index + 1}</span>
-        `, 'item-audio pop');
-        el.style.animationDelay = `${index * 0.1}s`;
-        bankAudio.appendChild(el);
+      // Создаем опции для списков
+      let nameOptions = '<option value="">-- Выберите жанр --</option>';
+      namesArr.forEach(item => {
+        nameOptions += `<option value="${item.id}">${item.name}</option>`;
       });
 
-      namesArr.forEach((item, index) => {
-        const el = createDraggable(item.id, 'name', item.name, 'item-name pop');
-        el.style.animationDelay = `${index * 0.1}s`;
-        bankNames.appendChild(el);
+      let descOptions = '<option value="">-- Выберите описание --</option>';
+      descsArr.forEach(item => {
+        descOptions += `<option value="${item.id}">${item.desc}</option>`;
       });
 
-      descsArr.forEach((item, index) => {
-        const el = createDraggable(item.id, 'desc', item.desc, 'item-desc pop');
-        el.style.animationDelay = `${index * 0.1}s`;
-        bankDescs.appendChild(el);
-      });
-
-      // Создаем 5 рядов сборки
-      for (let i = 0; i < 5; i++) {
+      // Создаем ряды для каждого трека
+      audioArr.forEach((track, index) => {
         const row = document.createElement('div');
         row.className = 'assembly-row pop';
-        row.style.animationDelay = `${i * 0.1}s`;
+        row.style.animationDelay = `${index * 0.1}s`;
+        row.dataset.trackId = track.id; // Запоминаем правильный ID для этого ряда
         
-        row.appendChild(createSlot('audio'));
-        row.appendChild(createSlot('name'));
-        row.appendChild(createSlot('desc'));
+        row.innerHTML = `
+          <div class="item-audio">
+            <button class="play-btn" onclick="togglePlay(this, '${track.audio}'); event.stopPropagation();">▶</button>
+            <span>Трек ${index + 1}</span>
+          </div>
+          <select class="custom-select name-select">
+            ${nameOptions}
+          </select>
+          <select class="custom-select desc-select">
+            ${descOptions}
+          </select>
+        `;
         
+        // Снимаем красную подсветку ошибки при изменении выбора
+        row.querySelectorAll('select').forEach(select => {
+          select.addEventListener('change', () => {
+            select.classList.remove('error-select');
+            row.classList.remove('shake');
+          });
+        });
+
         workspace.appendChild(row);
-      }
-    }
-
-    // Создание перетаскиваемого элемента
-    function createDraggable(id, type, innerHTML, extraClass) {
-      const el = document.createElement('div');
-      el.className = `draggable ${extraClass}`;
-      el.draggable = true;
-      el.dataset.id = id;
-      el.dataset.type = type;
-      el.id = `drag-${type}-${id}`; // Уникальный ID
-      el.innerHTML = innerHTML;
-
-      // HTML5 Drag Events
-      el.addEventListener('dragstart', (e) => {
-        draggedItem = el;
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', el.id);
-        setTimeout(() => el.style.opacity = '0.5', 0);
-        
-        // Сброс клик-выделения, если начали тащить
-        if(selectedItemForClick) selectedItemForClick.classList.remove('selected');
-        selectedItemForClick = null;
-        clearHighlights();
-      });
-
-      el.addEventListener('dragend', () => {
-        draggedItem = null;
-        el.style.opacity = '1';
-      });
-
-      // Click-to-move (Альтернатива для планшетов)
-      el.addEventListener('click', (e) => {
-        if (selectedItemForClick === el) {
-          // Отмена выделения
-          el.classList.remove('selected');
-          selectedItemForClick = null;
-          clearHighlights();
-        } else {
-          // Выделение нового
-          if(selectedItemForClick) selectedItemForClick.classList.remove('selected');
-          el.classList.add('selected');
-          selectedItemForClick = el;
-          highlightSlots(type);
-        }
-      });
-
-      return el;
-    }
-
-    // Создание слота (приемника)
-    function createSlot(type) {
-      const slot = document.createElement('div');
-      slot.className = 'slot';
-      slot.dataset.type = type;
-
-      // HTML5 Drop Events
-      slot.addEventListener('dragover', (e) => {
-        if (draggedItem && draggedItem.dataset.type === type) {
-          e.preventDefault();
-          slot.classList.add('drag-over');
-        }
-      });
-
-      slot.addEventListener('dragleave', () => {
-        slot.classList.remove('drag-over');
-      });
-
-      slot.addEventListener('drop', (e) => {
-        e.preventDefault();
-        slot.classList.remove('drag-over');
-        const id = e.dataTransfer.getData('text/plain');
-        const el = document.getElementById(id);
-        if (el && el.dataset.type === type) {
-          placeItemInSlot(el, slot);
-        }
-      });
-
-      // Click-to-drop Event
-      slot.addEventListener('click', () => {
-        if (selectedItemForClick && selectedItemForClick.dataset.type === type) {
-          placeItemInSlot(selectedItemForClick, slot);
-          selectedItemForClick.classList.remove('selected');
-          selectedItemForClick = null;
-          clearHighlights();
-        } else if (slot.children.length > 0) {
-          // Если кликнули на заполненный слот (без выбранного элемента), выкидываем элемент обратно в банк
-          const item = slot.children[0];
-          returnItemToBank(item);
-        }
-      });
-
-      return slot;
-    }
-
-    // Логика перемещения элемента в слот
-    function placeItemInSlot(item, slot) {
-      // Если в слоте уже что-то есть, возвращаем старое в банк
-      if (slot.children.length > 0) {
-        returnItemToBank(slot.children[0]);
-      }
-      
-      slot.appendChild(item);
-      slot.classList.add('has-item');
-    }
-
-    // Возврат элемента в родной банк
-    function returnItemToBank(item) {
-      item.parentElement.classList.remove('has-item');
-      
-      if (item.dataset.type === 'audio') bankAudio.appendChild(item);
-      else if (item.dataset.type === 'name') bankNames.appendChild(item);
-      else if (item.dataset.type === 'desc') bankDescs.appendChild(item);
-    }
-
-    // Подсветка слотов для Click-to-move
-    function highlightSlots(type) {
-      clearHighlights();
-      document.querySelectorAll(`.slot[data-type="${type}"]`).forEach(slot => {
-        slot.classList.add('highlight');
       });
     }
 
-    function clearHighlights() {
-      document.querySelectorAll('.slot').forEach(slot => slot.classList.remove('highlight'));
-    }
-
-    // Управление Аудио
+    // Управление Аудио (с поддержкой паузы)
     function togglePlay(btn, src) {
-      if (currentAudio.src.endsWith(src) && !currentAudio.paused) {
-         currentAudio.pause();
-         btn.innerHTML = '▶';
-         return;
+      // Если кликнули на тот же самый трек
+      if (currentAudio.src.endsWith(src)) {
+        if (!currentAudio.paused) {
+          // Если играл - ставим на паузу
+          currentAudio.pause();
+          btn.innerHTML = '▶';
+        } else {
+          // Если был на паузе - продолжаем
+          currentAudio.play().catch(e => console.log(e));
+          btn.innerHTML = '⏸';
+        }
+        return;
       }
-      if (currentPlayingBtn) currentPlayingBtn.innerHTML = '▶';
       
+      // Если играл другой трек, выключаем его
+      if (currentPlayingBtn) {
+        currentPlayingBtn.innerHTML = '▶';
+      }
+      
+      // Запускаем новый трек
       currentAudio.src = src;
       currentAudio.play().catch(e => {
-        console.log("Audio play failed. Note: files need to be in the same folder.", e);
+        console.log("Audio play failed.", e);
         alert("Звуковой файл " + src + " не найден в папке.");
       });
       btn.innerHTML = '⏸';
@@ -739,39 +513,48 @@
       let emptySlots = 0;
 
       rows.forEach(row => {
-        const slots = row.querySelectorAll('.slot');
-        let rowFilled = true;
-        let rowGenre = null;
-        let rowCorrect = true;
+        const trackId = row.dataset.trackId;
+        const nameSelect = row.querySelector('.name-select');
+        const descSelect = row.querySelector('.desc-select');
 
-        slots.forEach(slot => {
-          if (slot.children.length === 0) {
-            rowFilled = false;
-            emptySlots++;
-          } else {
-            const itemGenre = slot.children[0].dataset.id;
-            if (!rowGenre) rowGenre = itemGenre;
-            else if (rowGenre !== itemGenre) rowCorrect = false;
-          }
-        });
-
-        // Сбрасываем стили
+        // Сбрасываем старые стили ошибки
         row.classList.remove('success-row', 'shake');
+        nameSelect.classList.remove('error-select');
+        descSelect.classList.remove('error-select');
 
-        if (rowFilled) {
+        const nameVal = nameSelect.value;
+        const descVal = descSelect.value;
+
+        if (!nameVal || !descVal) {
+          emptySlots++;
+          isAllCorrect = false;
+        } else {
+          let rowCorrect = true;
+          
+          if (nameVal !== trackId) {
+            rowCorrect = false;
+            nameSelect.classList.add('error-select');
+          }
+          
+          if (descVal !== trackId) {
+            rowCorrect = false;
+            descSelect.classList.add('error-select');
+          }
+
           if (rowCorrect) {
             row.classList.add('success-row');
+            // Блокируем выбор, если всё верно
+            nameSelect.disabled = true;
+            descSelect.disabled = true;
           } else {
             row.classList.add('shake');
             isAllCorrect = false;
           }
-        } else {
-          isAllCorrect = false;
         }
       });
 
       if (emptySlots > 0) {
-        document.getElementById('failMessage').textContent = `Некоторые слоты пустые! Собери все жанры полностью.`;
+        document.getElementById('failMessage').textContent = `Некоторые списки не выбраны! Подбери жанры ко всем трекам.`;
         document.getElementById('failModal').classList.add('active');
       } else if (isAllCorrect) {
         // Останавливаем музыку при победе
@@ -779,7 +562,7 @@
         if(currentPlayingBtn) currentPlayingBtn.innerHTML = '▶';
         document.getElementById('successModal').classList.add('active');
       } else {
-        document.getElementById('failMessage').textContent = `Некоторые карточки не подходят друг другу (ряды подсвечены красным). Послушай внимательно и попробуй поменять их местами!`;
+        document.getElementById('failMessage').textContent = `Некоторые описания или названия подобраны неверно (они выделены красным). Послушай внимательно и попробуй еще раз!`;
         document.getElementById('failModal').classList.add('active');
       }
     }
@@ -790,7 +573,6 @@
 
     function closeFailModal() {
       document.getElementById('failModal').classList.remove('active');
-      // Снимаем тряску после закрытия окна
       document.querySelectorAll('.shake').forEach(el => el.classList.remove('shake'));
     }
 
