@@ -7,6 +7,7 @@
   <style>
     :root {
       --reb-pink: #ED3269;
+      --reb-pink-hover: #D12558;
       --reb-pink-light: #FAD1DE;
       --reb-dark: #1E1E1E;
       --reb-bg: #F5F7FA;
@@ -323,7 +324,7 @@
 </head>
 <body>
 
-  <img src="logo.svg" alt="Rebotica" class="logo">
+  <img src="logo.png" alt="Rebotica" class="logo">
 
   <div class="main-container">
     <div class="header-text">
@@ -402,8 +403,9 @@
     ];
 
     // Аудио плеер
-    let currentAudio = new Audio();
-    let currentPlayingBtn = null;
+    const currentAudio = new Audio();
+    let currentPlayingBtn = null; // кнопка текущего трека
+    let currentSrc = null;        // ИСХОДНОЕ имя файла текущего трека (не currentAudio.src!)
 
     // DOM Элементы
     const workspace = document.getElementById('workspace');
@@ -448,7 +450,7 @@
         
         row.innerHTML = `
           <div class="item-audio">
-            <button class="play-btn" onclick="togglePlay(this, '${track.audio}'); event.stopPropagation();">▶</button>
+            <button class="play-btn" type="button">▶</button>
             <span>Трек ${index + 1}</span>
           </div>
           <select class="custom-select name-select">
@@ -458,6 +460,13 @@
             ${descOptions}
           </select>
         `;
+
+        // Обработчик кнопки воспроизведения/паузы
+        const playBtn = row.querySelector('.play-btn');
+        playBtn.addEventListener('click', (event) => {
+          event.stopPropagation();
+          togglePlay(playBtn, track.audio);
+        });
         
         // Снимаем красную подсветку ошибки при изменении выбора
         row.querySelectorAll('select').forEach(select => {
@@ -471,40 +480,51 @@
       });
     }
 
+    // Смена иконки кнопки
+    function setBtnIcon(btn, isPlaying) {
+      if (btn) btn.textContent = isPlaying ? '⏸' : '▶';
+    }
+
     // Управление Аудио (с поддержкой паузы)
     function togglePlay(btn, src) {
-      // Если кликнули на тот же самый трек
-      if (currentAudio.src.endsWith(src)) {
-        if (!currentAudio.paused) {
-          // Если играл - ставим на паузу
-          currentAudio.pause();
-          btn.innerHTML = '▶';
+      // Клик по тому же треку — пауза / продолжение
+      if (btn === currentPlayingBtn && src === currentSrc) {
+        if (currentAudio.paused) {
+          setBtnIcon(btn, true);
+          currentAudio.play().catch(e => {
+            console.log(e);
+            setBtnIcon(btn, false);
+          });
         } else {
-          // Если был на паузе - продолжаем
-          currentAudio.play().catch(e => console.log(e));
-          btn.innerHTML = '⏸';
+          currentAudio.pause();
+          setBtnIcon(btn, false);
         }
         return;
       }
-      
-      // Если играл другой трек, выключаем его
-      if (currentPlayingBtn) {
-        currentPlayingBtn.innerHTML = '▶';
-      }
-      
+
+      // Клик по другому треку — останавливаем предыдущий
+      currentAudio.pause();
+      setBtnIcon(currentPlayingBtn, false);
+
       // Запускаем новый трек
+      currentSrc = src;
+      currentPlayingBtn = btn;
       currentAudio.src = src;
+      setBtnIcon(btn, true);
+
       currentAudio.play().catch(e => {
         console.log("Audio play failed.", e);
+        setBtnIcon(btn, false);
+        currentPlayingBtn = null;
+        currentSrc = null;
         alert("Звуковой файл " + src + " не найден в папке.");
       });
-      btn.innerHTML = '⏸';
-      currentPlayingBtn = btn;
     }
 
-    currentAudio.onended = () => { 
-      if(currentPlayingBtn) currentPlayingBtn.innerHTML = '▶'; 
-    }
+    // Трек доиграл до конца — возвращаем иконку ▶
+    currentAudio.addEventListener('ended', () => {
+      setBtnIcon(currentPlayingBtn, false);
+    });
 
     // Проверка результатов
     function checkAnswers() {
@@ -559,7 +579,7 @@
       } else if (isAllCorrect) {
         // Останавливаем музыку при победе
         currentAudio.pause();
-        if(currentPlayingBtn) currentPlayingBtn.innerHTML = '▶';
+        setBtnIcon(currentPlayingBtn, false);
         document.getElementById('successModal').classList.add('active');
       } else {
         document.getElementById('failMessage').textContent = `Некоторые описания или названия подобраны неверно (они выделены красным). Послушай внимательно и попробуй еще раз!`;
